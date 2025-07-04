@@ -191,6 +191,15 @@
             font-weight: bold;
             color: #28a745;
         }
+        .contribution-input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            border: 1px solid #28a745;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+        }
         
         @media (max-width: 768px) {
             .summary-box {
@@ -202,6 +211,10 @@
             }
             .summary-box .value {
                 font-size: 20px;
+            }
+            .contribution-input {
+                margin-top: 8px;
+                font-size: 16px;
             }
         }
         table {
@@ -368,6 +381,8 @@
             <div class="summary-box">
                 <h3>Months to $2k/mo</h3>
                 <div class="value" id="monthsToTarget">35</div>
+                <input type="number" id="monthlyContribution" class="contribution-input" 
+                       placeholder="Monthly contribution" min="0" step="100">
             </div>
         </div>
 
@@ -426,7 +441,8 @@
         let autoSaveTimeout;
         let config = {
             apiKey: localStorage.getItem('jsonbin_apikey') || '',
-            binId: localStorage.getItem('jsonbin_binid') || ''
+            binId: localStorage.getItem('jsonbin_binid') || '',
+            monthlyContribution: parseFloat(localStorage.getItem('monthly_contribution')) || 0
         };
 
         // Calculate running totals
@@ -451,6 +467,19 @@
             });
         }
 
+        // Calculate average of last 3 contributions
+        function calculateAverageContribution() {
+            const actualContributions = investmentData
+                .filter(row => row.actual > 0 && row.month > 0)
+                .slice(-3)
+                .map(row => row.actual);
+            
+            if (actualContributions.length > 0) {
+                return actualContributions.reduce((sum, val) => sum + val, 0) / actualContributions.length;
+            }
+            return 6500; // Default if no contributions yet
+        }
+
         // Update summary
         function updateSummary() {
             const lastActualRow = investmentData.filter(row => row.actual > 0).pop();
@@ -458,13 +487,22 @@
             const remaining = 230000 - currentBalance;
             const progress = (currentBalance / 230000) * 100;
             const monthlyDividend = currentBalance * 0.115 / 12;
-            const monthsToTarget = remaining / 6500;
+            
+            // Use stored contribution or calculate average
+            let monthlyContribution = config.monthlyContribution;
+            if (!monthlyContribution || monthlyContribution === 0) {
+                monthlyContribution = calculateAverageContribution();
+                config.monthlyContribution = monthlyContribution;
+                document.getElementById('monthlyContribution').value = Math.round(monthlyContribution);
+            }
+            
+            const monthsToTarget = monthlyContribution > 0 ? remaining / monthlyContribution : 0;
             
             document.getElementById('currentBalance').textContent = `$${currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('remainingGoal').textContent = `$${remaining.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
             document.getElementById('progress').textContent = `${progress.toFixed(2)}%`;
             document.getElementById('monthlyDividend').textContent = `$${monthlyDividend.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('monthsToTarget').textContent = Math.ceil(monthsToTarget);
+            document.getElementById('monthsToTarget').textContent = monthlyContribution > 0 ? Math.ceil(monthsToTarget) : '∞';
         }
 
         // Render table
@@ -712,6 +750,20 @@
                 // Load default data if no JSONBin configured
                 loadDefaultData();
             }
+            
+            // Set up contribution input
+            const contributionInput = document.getElementById('monthlyContribution');
+            if (config.monthlyContribution > 0) {
+                contributionInput.value = Math.round(config.monthlyContribution);
+            }
+            
+            // Handle contribution input changes
+            contributionInput.addEventListener('input', function() {
+                const value = parseFloat(this.value) || 0;
+                config.monthlyContribution = value;
+                localStorage.setItem('monthly_contribution', value);
+                updateSummary();
+            });
         });
 
         function loadDefaultData() {
