@@ -253,7 +253,7 @@
                 <li>Create a new bin and copy its ID</li>
             </ol>
             
-            <label for="apiKey">API Key (X-Master-Key):</label>
+            <label for="apiKey">API Key (X-Access-Key):</label>
             <input type="password" id="apiKey" placeholder="Your JSONBin API key">
             
             <label for="binId">Bin ID:</label>
@@ -447,7 +447,7 @@
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-Master-Key': config.apiKey
+                            'X-Access-Key': config.apiKey
                         },
                         body: JSON.stringify(dataToSave)
                     });
@@ -457,7 +457,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-Master-Key': config.apiKey,
+                            'X-Access-Key': config.apiKey,
                             'X-Bin-Name': 'REIT-Investment-Tracker'
                         },
                         body: JSON.stringify(dataToSave)
@@ -492,7 +492,7 @@
             try {
                 const response = await fetch(`https://api.jsonbin.io/v3/b/${config.binId}/latest`, {
                     headers: {
-                        'X-Master-Key': config.apiKey
+                        'X-Access-Key': config.apiKey
                     }
                 });
 
