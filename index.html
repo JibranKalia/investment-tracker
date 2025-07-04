@@ -7,19 +7,41 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 10px;
             background-color: #f5f5f5;
         }
         .container {
             max-width: 1400px;
             margin: 0 auto;
             background-color: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            .container {
+                padding: 10px;
+                border-radius: 0;
+            }
+        }
         h1, h2 {
             color: #333;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+            h2 {
+                font-size: 20px;
+                margin-top: 20px;
+            }
         }
         .controls {
             background-color: #f8f9fa;
@@ -32,11 +54,23 @@
             flex-wrap: wrap;
         }
         .controls button {
-            padding: 8px 16px;
+            padding: 10px 16px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
+            min-height: 44px; /* Better touch target */
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                padding: 10px;
+                gap: 8px;
+            }
+            .controls button {
+                flex: 1;
+                min-width: 100px;
+            }
         }
         .save-btn {
             background-color: #28a745;
@@ -57,6 +91,16 @@
             margin-left: auto;
             font-size: 14px;
             color: #666;
+            white-space: nowrap;
+        }
+        
+        @media (max-width: 768px) {
+            .status {
+                margin-left: 0;
+                width: 100%;
+                text-align: center;
+                font-size: 13px;
+            }
         }
         .status.success {
             color: #28a745;
@@ -85,6 +129,16 @@
             border-radius: 8px;
             max-width: 500px;
             width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .config-content {
+                padding: 20px;
+                width: 95%;
+                margin: 20px;
+            }
         }
         .config-content h3 {
             margin-top: 0;
@@ -104,8 +158,22 @@
         .summary {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .summary {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .summary {
+                grid-template-columns: 1fr;
+            }
         }
         .summary-box {
             background-color: #f8f9fa;
@@ -123,15 +191,64 @@
             font-weight: bold;
             color: #28a745;
         }
+        
+        @media (max-width: 768px) {
+            .summary-box {
+                padding: 12px;
+            }
+            .summary-box h3 {
+                font-size: 12px;
+                margin-bottom: 5px;
+            }
+            .summary-box .value {
+                font-size: 20px;
+            }
+        }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -10px;
+            padding: 0 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .table-wrapper {
+                margin: 0 -10px;
+                padding: 0;
+            }
+            table {
+                font-size: 12px;
+                min-width: 800px;
+            }
+            th, td {
+                padding: 6px;
+            }
+            .editable {
+                min-height: 44px; /* Better touch targets */
+            }
         }
         th, td {
             border: 1px solid #dee2e6;
             padding: 8px;
             text-align: left;
+        }
+        
+        @media (max-width: 768px) {
+            th, td {
+                padding: 8px 6px;
+                position: relative;
+            }
+            td.editable {
+                cursor: pointer;
+                -webkit-tap-highlight-color: rgba(0,123,255,0.1);
+            }
         }
         th {
             background-color: #e9ecef;
@@ -143,6 +260,17 @@
         .editable {
             background-color: #fff3cd;
             cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .editable:hover {
+            background-color: #ffe8a1;
+        }
+        
+        @media (max-width: 768px) {
+            .editable:active {
+                background-color: #ffe8a1;
+            }
         }
         .dividend-quarter {
             background-color: #d1ecf1;
@@ -153,12 +281,21 @@
         }
         input.cell-input {
             width: 100%;
-            border: none;
-            padding: 4px;
+            border: 1px solid #007bff;
+            padding: 6px;
             font-size: 14px;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            input.cell-input {
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: 8px;
+            }
         }
         .notes {
             max-width: 200px;
+            min-width: 120px;
         }
         .info-box {
             background-color: #e7f3ff;
@@ -167,6 +304,22 @@
             margin-bottom: 20px;
             font-size: 14px;
         }
+        
+        .mobile-hint {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .info-box {
+                font-size: 13px;
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+            .mobile-hint {
+                display: inline;
+                color: #666;
+            }
+        }
         @media print {
             body {
                 margin: 0;
@@ -174,8 +327,8 @@
             .container {
                 box-shadow: none;
             }
-            .controls {
-                display: none;
+            .controls, .info-box, .mobile-hint {
+                display: none !important;
             }
         }
     </style>
@@ -183,6 +336,10 @@
 <body>
     <div class="container">
         <h1>REIT Investment Tracker - Road to $230k</h1>
+        
+        <div class="info-box">
+            <strong>Auto-save enabled:</strong> Your data saves to JSONBin automatically when you make changes. Configure your JSONBin credentials using the Settings button.
+        </div>
         
         <div class="controls">
             <button class="save-btn" onclick="saveToJSONBin()">💾 Save to Cloud</button>
@@ -215,27 +372,29 @@
         </div>
 
         <h2>Investment Schedule</h2>
-        <p><em>Yellow cells are editable. Quarterly dividend rows are highlighted in blue.</em></p>
+        <p><em>Yellow cells are editable. Quarterly dividend rows are highlighted in blue. <span class="mobile-hint">Swipe left/right to see all columns.</span></em></p>
         
-        <table id="investmentTable">
-            <thead>
-                <tr>
-                    <th>Month #</th>
-                    <th>Date</th>
-                    <th>Target Contribution</th>
-                    <th>Actual Contribution</th>
-                    <th>Dividend Received</th>
-                    <th>Total Invested</th>
-                    <th>Balance</th>
-                    <th>Est. Monthly Dividend</th>
-                    <th>Remaining to Goal</th>
-                    <th>Notes</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Table rows will be generated by JavaScript -->
-            </tbody>
-        </table>
+        <div class="table-wrapper">
+            <table id="investmentTable">
+                <thead>
+                    <tr>
+                        <th>Month #</th>
+                        <th>Date</th>
+                        <th>Target Contribution</th>
+                        <th>Actual Contribution</th>
+                        <th>Dividend Received</th>
+                        <th>Total Invested</th>
+                        <th>Balance</th>
+                        <th>Est. Monthly Dividend</th>
+                        <th>Remaining to Goal</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table rows will be generated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Configuration Modal -->
@@ -352,48 +511,64 @@
             }, 2000); // Save 2 seconds after last edit
         }
 
-        // Handle cell editing
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('editable')) {
-                const field = e.target.dataset.field;
-                const index = parseInt(e.target.dataset.index);
-                const currentValue = investmentData[index][field === 'contribution' ? 'actual' : field];
-                
-                const input = document.createElement('input');
-                input.className = 'cell-input';
-                input.type = field === 'notes' ? 'text' : 'number';
-                input.value = field === 'notes' ? currentValue : currentValue;
-                input.step = '0.01';
-                
-                e.target.innerHTML = '';
-                e.target.appendChild(input);
-                input.focus();
-                input.select();
-                
-                input.addEventListener('blur', function() {
-                    let newValue = input.value;
+        // Handle cell editing (both click and touch)
+        ['click', 'touchend'].forEach(eventType => {
+            document.addEventListener(eventType, function(e) {
+                if (e.target.classList.contains('editable') && !e.target.querySelector('input')) {
+                    // Prevent default touch behavior
+                    if (eventType === 'touchend') {
+                        e.preventDefault();
+                    }
+                    
+                    const field = e.target.dataset.field;
+                    const index = parseInt(e.target.dataset.index);
+                    const currentValue = investmentData[index][field === 'contribution' ? 'actual' : field];
+                    
+                    const input = document.createElement('input');
+                    input.className = 'cell-input';
+                    input.type = field === 'notes' ? 'text' : 'number';
+                    input.value = field === 'notes' ? currentValue : currentValue;
+                    input.step = '0.01';
+                    
+                    // Add inputmode for better mobile keyboards
                     if (field !== 'notes') {
-                        newValue = parseFloat(newValue) || 0;
+                        input.inputMode = 'decimal';
                     }
                     
-                    if (field === 'contribution') {
-                        investmentData[index].actual = newValue;
-                    } else {
-                        investmentData[index][field] = newValue;
+                    e.target.innerHTML = '';
+                    e.target.appendChild(input);
+                    input.focus();
+                    
+                    // Don't select on mobile to avoid issues
+                    if (window.innerWidth > 768) {
+                        input.select();
                     }
                     
-                    calculateTotals();
-                    updateSummary();
-                    renderTable();
-                    autoSave(); // Trigger auto-save
-                });
-                
-                input.addEventListener('keypress', function(event) {
-                    if (event.key === 'Enter') {
-                        input.blur();
-                    }
-                });
-            }
+                    input.addEventListener('blur', function() {
+                        let newValue = input.value;
+                        if (field !== 'notes') {
+                            newValue = parseFloat(newValue) || 0;
+                        }
+                        
+                        if (field === 'contribution') {
+                            investmentData[index].actual = newValue;
+                        } else {
+                            investmentData[index][field] = newValue;
+                        }
+                        
+                        calculateTotals();
+                        updateSummary();
+                        renderTable();
+                        autoSave(); // Trigger auto-save
+                    });
+                    
+                    input.addEventListener('keypress', function(event) {
+                        if (event.key === 'Enter') {
+                            input.blur();
+                        }
+                    });
+                }
+            });
         });
 
         // JSONBin functions
